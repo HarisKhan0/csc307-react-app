@@ -5,15 +5,17 @@ import Table from './Table';
 function MyApp() {
   const [characters, setCharacters] = useState([]);
 
+  function updateList(person) {
+  setCharacters([...characters, person]);
+}
 
-  return (
-    <div className="container">
-      <Table characterData={characters} removeCharacter={removeOneCharacter} />
-      <Form />
-    </div>
-  )
-  
-  
+return (
+  <div className="container">
+    <Table characterData={characters} removeCharacter={removeOneCharacter} />
+    <Form handleSubmit={updateList} />
+  </div>
+)
+
 function removeOneCharacter (index) {
   const updated = characters.filter((character, i) => {
       return i !== index
