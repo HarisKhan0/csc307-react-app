@@ -5,6 +5,9 @@ const port = 8000;
 
 app.use(cors());
 app.use(express.json());
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
+}); 
 
 const users = 
 { 
@@ -77,28 +80,21 @@ function findUserById(id) {
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    addUser(userToAdd);
-    res.status(200).end();
+    userToAdd.id = Math.floor(Math.random() * (999999 - 100000) + 100000).toString();
+    users['users_list'].push(userToAdd);
+    res.status(201).send(userToAdd).end();
 });
-
-function addUser(user){
-    users['users_list'].push(user);
-}
 
 app.delete('/users/:id', (req, res) => {
     const id = req.params['id']; //or req.params.id
-    let result = deletehelper(id);
+    let result = findUserById(id);
     if (result === undefined || result.length == 0)
         res.status(404).send('Resource not found.');
     else {
-        result = {users_list: result};
-        res.send(result);
+        users['users_list'] = users['users_list'].filter( (user) => user['id'] !== id);
+        res.status(204).end();
     }
 })
- 
-function deletehelper (id) {
-    return users['users_list'].filter( (user) => user['id'] !== id);
-}
 
 app.get('/users/:name/:job', (req, res) => {
     const name = req.params.name;
@@ -116,7 +112,3 @@ app.get('/users/:name/:job', (req, res) => {
 const findUserByNameNJob = (name, job) => { 
     return users['users_list'].filter( (user) => user['name'] === name && user['job'] === job); 
 }
-
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
-}); 

@@ -26,7 +26,7 @@ function MyApp() {
 
  function updateList(person) { 
   makePostCall(person).then( result => {
-  if (result && result.status === 200)
+  if (result && result.status === 201)
      setCharacters([...characters, person] );
     });
   }
@@ -43,19 +43,31 @@ async function fetchAll(){
   }
 }
 
+
+async function removeOneCharacter(index) {
+  const updated = characters.filter((character, i) => {
+      return i !== index
+    });
+  setCharacters(updated);
+  try {
+  const response =
+    await axios.delete(`http://localhost:8000/users/${characters[index].id}`);
+    return response;
+  }
+  catch (error) {
+    console.log(error); 
+    return;
+  }
+}
+
+
 return (
   <div className="container">
     <Table characterData={characters} removeCharacter={removeOneCharacter} />
     <Form handleSubmit={updateList} />
   </div>
 )
-
-function removeOneCharacter (index) {
-  const updated = characters.filter((character, i) => {
-      return i !== index
-    });
-    setCharacters(updated);
-  }
 }
+
 
 export default MyApp;
