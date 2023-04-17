@@ -1,12 +1,32 @@
 import Form from './Form';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Table from './Table';
+import axios from 'axios';
 
 function MyApp() {
   const [characters, setCharacters] = useState([]);
 
+  useEffect(() => {
+    fetchAll().then( result => {
+       if (result)
+          setCharacters(result);
+     });
+  }, [] );
+
   function updateList(person) {
   setCharacters([...characters, person]);
+}
+
+async function fetchAll(){
+  try {
+     const response = await axios.get('http://localhost:8000/users');
+     return response.data.users_list;     
+  }
+  catch (error){
+     //We're not handling errors. Just logging into the console.
+     console.log(error); 
+     return false;         
+  }
 }
 
 return (
